@@ -1,0 +1,65 @@
+arch: "default"
+images:
+  - location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
+    arch: "x86_64"
+  - location: "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-arm64.img"
+    arch: "aarch64"
+
+# Use Lima defaults: min(4, host CPUs) and min(4GiB, half of host memory)
+cpus: null
+memory: null
+
+firmware:
+  legacyBIOS: false
+
+# Mount shimmer source code
+mounts:
+  - location: ".."
+    mountPoint: "/mnt/valet"
+    writable: true
+  - location: "/tmp/lima"
+    writable: true
+
+# Provision script to set up Shimmer testing environment
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -e
+      # valet is mounted at /mnt/valet
+      PROJECT_ROOT="/mnt/valet"
+
+      if [ ! -f "$PROJECT_ROOT/vm/provision.sh" ]; then
+        echo "ERROR: Could not find provision.sh at $PROJECT_ROOT/vm/provision.sh"
+        exit 1
+      fi
+
+      bash "$PROJECT_ROOT/vm/provision.sh"
+
+  # Install Rust as regular user
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -e
+
+      echo "Installing Rust..."
+      if ! command -v cargo &> /dev/null; then
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          source "$HOME/.cargo/env"
+      fi
+      echo "Rust installed!"
+
+  # Build RocksDB
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -e
+      # valet is mounted at /mnt/valet
+      PROJECT_ROOT="/mnt/valet"
+
+      if [ ! -f "$PROJECT_ROOT/vm/build-rocksdb.sh" ]; then
+        echo "ERROR: Could not find build-rocksdb.sh at $PROJECT_ROOT/vm/build-rocksdb.sh"
+        exit 1
+      fi
+
+      bash "$PROJECT_ROOT/vm/build-rocksdb.sh"

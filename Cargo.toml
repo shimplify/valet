@@ -1,0 +1,33 @@
+[package]
+name = "shimmer"
+version = "6.0.0"
+authors = ["Dev Purandare"]
+description = "A LD_PRELOAD dynamic library virtual filesystem for RocksDB on ZNS devices"
+readme = "./README.md"
+license = "MIT"
+edition = "2024"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "shimmer"
+crate-type = ["cdylib"]
+doc = true
+
+[features]
+default = []
+verbose-logging = []
+debug-tracing = ["backtrace", "signal-hook", "chrono"]
+disable-gc = []
+
+[dependencies]
+libc = "0.2.176"
+redhook = "2.0.0"
+dashmap = { version = "6.1.0", features = ["inline"] }
+serde = { version = "1.0.221", features = ["derive"] }
+serde_json = "1.0"
+thingbuf = { version = "0.1.6", features = ["static"] }
+ctor = "0.4.2"
+libc-print = "0.1.23"
+backtrace = { version = "0.3", optional = true }
+signal-hook = { version = "0.3", optional = true }
+chrono = { version = "0.4", optional = true }
