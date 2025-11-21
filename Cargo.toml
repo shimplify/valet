@@ -1,8 +1,8 @@
 [package]
 name = "shimmer"
-version = "6.0.0"
-authors = ["Dev Purandare"]
-description = "A LD_PRELOAD dynamic library virtual filesystem for RocksDB on ZNS devices"
+version = "7.0.0"
+authors = ["Devashish R. Purandare"]
+description = "Implementation of Valet from ACM SoCC'25"
 readme = "./README.md"
 license = "MIT"
 edition = "2024"
