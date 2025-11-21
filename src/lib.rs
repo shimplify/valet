@@ -91,6 +91,8 @@ macro_rules! shimmer_error {
 
 /// Helper functions
 pub mod helpers;
+/// Clustering-based stream prediction
+pub mod learning;
 /// Metadata persistence
 pub mod metadata;
 /// Persistence Code

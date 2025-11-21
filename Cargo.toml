@@ -1,8 +1,8 @@
 [package]
-name = "shimmer"
+name = "valet"
 version = "6.0.0"
-authors = ["Dev Purandare"]
-description = "A LD_PRELOAD dynamic library virtual filesystem for RocksDB on ZNS devices"
+authors = ["Devashish R. Purandare"]
+description = "A LD_PRELOAD dynamic library demonstrating dynamic data placement and hint generation"
 readme = "./README.md"
 license = "MIT"
 edition = "2024"
@@ -31,3 +31,9 @@ libc-print = "0.1.23"
 backtrace = { version = "0.3", optional = true }
 signal-hook = { version = "0.3", optional = true }
 chrono = { version = "0.4", optional = true }
+linfa-clustering = "0.8.0"
+ndarray = "0.16.1"
+linfa = "0.8.0"
+rand_xoshiro = "0.6.0"
+rand = "0.8.5"
+rand_distr = "0.4.3"

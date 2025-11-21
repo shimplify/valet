@@ -2,6 +2,7 @@
 
 use crate::helpers;
 use crate::helpers::*;
+use crate::learning;
 use crate::persist::*;
 use crate::state;
 use crate::state::*;
@@ -285,27 +286,25 @@ redhook::hook! {
             path = CStr::from_ptr(pathname).to_str().unwrap();
         }
 
-        // RocksDB-specific files of interest
+        // Track RocksDB files
         if path.ends_with(".sst") || path.ends_with(".log") || path.ends_with(".lsm") {
-            let _stream_type = if path.ends_with(".log") {
-                FD_TO_STREAM.entry(fd).or_insert_with(|| Stream::LOG);
-                Stream::LOG
-            } else if path.ends_with(".sst") {
-                FD_TO_STREAM.entry(fd).or_insert_with(|| Stream::SSTable);
-                Stream::SSTable
-            } else {
-                FD_TO_STREAM.entry(fd).or_insert_with(|| Stream::LSM);
-                Stream::LSM
+            // Extract filename for clustering prediction
+            let filename = match std::path::Path::new(path).file_name() {
+                Some(file) => file.to_string_lossy().to_string(),
+                None => path.to_string(),
             };
+
+            // Use clustering to predict stream type
+            let stream_type = learning::get_stream(filename.clone(), flags, mode);
+            FD_TO_STREAM.entry(fd).or_insert_with(|| stream_type);
 
             let id = PATH_TO_UID.entry(path.to_owned()).or_insert(UID.fetch_add(1,
                     Ordering::Relaxed)).to_owned();
             FD_TO_UID.insert(fd, id);
             FILESYSTEM.entry(id).or_insert_with(|| Files::new(0));
 
-            shimmer_debug!("Opened {} file: {} as fd={}, uid={}, stream={:?}",
-                          if path.ends_with(".log") { "LOG" } else { "SST" },
-                          path, fd, id, _stream_type);
+            shimmer_debug!("Opened file: {} as fd={}, uid={}, predicted_stream={:?}",
+                          path, fd, id, stream_type);
         }
         fd
     }
