@@ -117,8 +117,7 @@ Detected 15 zones from /mnt/zonefs/seq/, size=134217728 bytes (128 MiB), capacit
 
 - **`automated-hints`**: ML-based stream classification and automated data placement
 - **`main`**: Base implementation
-- **`sleepycat`**: WiredTiger shim
-- **`hinty`**: Hints-only approach (ideal for stream/FDP/filesystem integration)
+- **`hinted`**: Hints-only approach (ideal for stream/FDP/filesystem integration)
 
 ## Requirements
 
